@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Pressable,
   Image,
@@ -7,75 +7,87 @@ import {
   Text,
   View,
   TextInput,
-  Button,
+  TouchableOpacity,
 } from "react-native";
+import config from "../config";
 
-export default Home = ({navigation}) => {
-  const [games, setGames] = useState([
-    // { id: 1, name: "Jeux 1", rating: 4.6 },
-    // { id: 2, name: "Jeux 2", rating: 3.5 },
-    // { id: 3, name: "Jeux 3", rating: 4.2 },
-    // { id: 4, name: "Jeux 4", rating: 1.5 },
-    // { id: 5, name: "Jeux 5", rating: 3.7 },
-    // { id: 6, name: "Jeux 6", rating: 5 },
-  ]);
-
+export default Home = ({ navigation }) => {
+  const [games, setGames] = useState([]);
   const [searchText, setSearchText] = useState("");
 
   const handleButton = () => {
-    const apiKey = "f08ae4dc2278460e8d6fb51f41066f0b";
-
-    const url = `https://api.rawg.io/api/games?key=${apiKey}&search=${encodeURI(
-      searchText
-    )}`;
+    const url = `https://api.rawg.io/api/games?key=${
+      config.configAPI
+    }&search=${encodeURI(searchText)}`;
 
     fetch(url)
       .then((response) => response.json())
       .then((data) => {
         setGames(data.results);
       })
-      .catch(() => {
-        alert("you are a debilous !!! ");
+      .catch((e) => {
+        alert(e.message);
       });
   };
 
   const handleClick = (slug) => {
-    navigation.push('Test', {slug});
+    navigation.push("Détails", { slug });
   };
   return (
     <View style={style.page}>
+      <Text
+        style={{
+          color: "white",
+          textAlign: "center",
+          fontSize: 25,
+          marginTop: 15,
+        }}
+      >
+        You can search any games !
+      </Text>
       <View style={style.searchBar}>
         <TextInput
           value={searchText}
           onChangeText={setSearchText}
           style={style.searchInput}
         ></TextInput>
-        <Button title="Chercher" onPress={handleButton}></Button>
+        <TouchableOpacity style={style.button} onPress={handleButton}>
+          <Text style={{ color: "white", fontSize: 40 }}>🔍</Text>
+        </TouchableOpacity>
       </View>
-      {/* <Text>{searchText}</Text> */}
-      <FlatList
-        style={style.list}
-        data={games}
-        renderItem={({ item }) => (
-          <Pressable
-            onPress={() => {
-              handleClick(item.slug);
-            }}
-          >
-            <View style={style.listItem}>
-              <Image
-                source={{ uri: item.background_image }}
-                style={style.listImage}
-              ></Image>
-              <View>
-                <Text>{item.name}</Text>
-                <Text>Notes : {item.rating}</Text>
+      <View style={style.list}>
+    
+        <FlatList
+          data={games}
+          renderItem={({ item }) => (
+            <Pressable
+              onPress={() => {
+                handleClick(item.slug);
+              }}
+            >
+              <View style={style.listItem}>
+                <Image
+                  source={{ uri: item.background_image }}
+                  style={style.listImage}
+                ></Image>
+                <View style={style.description}>
+                  <Text style={style.name}>{item.name}</Text>
+                  <Text
+                    style={
+                      item.rating <= 3
+                        ? style.itemRBadRating
+                        : style.itemGoodRating
+                    }
+                  >
+                    Notes : {item.rating}
+                  </Text>
+                </View>
               </View>
-            </View>
-          </Pressable>
-        )}
-        keyExtractor={(item) => item.id}
-      ></FlatList>
+            </Pressable>
+          )}
+          keyExtractor={(item) => item.id}
+        ></FlatList>
+      </View>
     </View>
   );
 };
@@ -83,28 +95,70 @@ export default Home = ({navigation}) => {
 const style = {
   page: {
     flex: 1,
+    flexDirection: "column",
+    backgroundColor: "black",
   },
+
   searchBar: {
+    paddingTop: 20,
+    paddingBottom: 20,
     flexDirection: "row",
+    alignItems: "center",
+    margin: 8,
   },
+
   searchInput: {
     flex: 1,
     borderWidth: 1,
-    borderColor: "#dddddd",
+    borderColor: "white",
+    marginRight: 10,
+    backgroundColor: "white",
+    height: 70,
     padding: 10,
+    fontSize: 20,
   },
+
+  button: {
+    height: 70,
+    width: 70,
+    backgroundColor: "grey",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 30,
+  },
+
   list: {
-    flex: 1,
+    flex: 8,
+    backgroundColor: "black",
   },
+
   listItem: {
-    margin: 2,
-    padding: 2,
     backgroundColor: "#e0e0e0",
     flexDirection: "row",
+    height: 100,
+    margin: 8,
+    borderRadius: 10,
+    alignItems: "center",
   },
+
+  name: {
+    fontSize: 15,
+    fontWeight: "bold",
+  },
+
+  itemRBadRating: {
+    color: "red",
+  },
+
+  itemGoodRating: {
+    color: "green",
+  },
+
   listImage: {
-    width: 60,
-    resizeMode: "center",
+    width: 100,
+    height: 100,
+    resizeMode: "cover",
     marginRight: 10,
+    borderRadius: 10,
   },
 };
