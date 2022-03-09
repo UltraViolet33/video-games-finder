@@ -5,7 +5,7 @@ import { Button, Image } from "react-native";
 
 export default Details = ({ navigation, route }) => {
   const getGameData = (slug) => {
-    const apiKey = "f08ae4dc2278460e8d6fb51f41066f0b";
+    const apiKey = "";
 
     const url = `https://api.rawg.io/api/games/${slug}?key=${apiKey}`;
 

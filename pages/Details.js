@@ -5,8 +5,10 @@ import { Image, StyleSheet, ScrollView } from "react-native";
 import config from "../config";
 
 export default Details = ({ navigation, route }) => {
+
   
   const [game, setGame] = useState({});
+
 
   const regex = /(<([^>]+)>)/gi;
 

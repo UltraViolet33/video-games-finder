@@ -16,6 +16,7 @@ export default Home = ({ navigation }) => {
   const [searchText, setSearchText] = useState("");
 
   const handleButton = () => {
+
     const url = `https://api.rawg.io/api/games?key=${
       config.configAPI
     }&search=${encodeURI(searchText)}`;
