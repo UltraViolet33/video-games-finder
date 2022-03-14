@@ -42,6 +42,9 @@ export default Home = ({ navigation }) => {
   };
   return (
     <View style={style.page}>
+      <Button title="Recherche" onPress={() => {
+            navigation.push("Shop");
+          }}></Button>
       <Text
         style={{
           color: "white",
