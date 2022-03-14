@@ -8,15 +8,18 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  Button,
 } from "react-native";
 import config from "../config";
+import { useDispatch, useSelector } from "react-redux";
 
 export default Home = ({ navigation }) => {
   const [games, setGames] = useState([]);
   const [searchText, setSearchText] = useState("");
 
-  const handleButton = () => {
+  const bookmarks = useSelector((state) => state.bookmarks);
 
+  const handleButton = () => {
     const url = `https://api.rawg.io/api/games?key=${
       config.configAPI
     }&search=${encodeURI(searchText)}`;
@@ -31,8 +34,11 @@ export default Home = ({ navigation }) => {
       });
   };
 
+  const isBookmarked = (game) =>
+    bookmarks.find((bookmark) => bookmark.id == game.id) !== undefined;
+
   const handleClick = (slug) => {
-    navigation.push("Détails", { slug });
+    navigation.push("Details", { slug });
   };
   return (
     <View style={style.page}>
@@ -57,7 +63,6 @@ export default Home = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={style.list}>
-    
         <FlatList
           data={games}
           renderItem={({ item }) => (
@@ -82,12 +87,22 @@ export default Home = ({ navigation }) => {
                   >
                     Notes : {item.rating}
                   </Text>
+                  {isBookmarked(item) ? (
+                    <Text>⭐</Text>
+                  ) : <Text></Text>
+                   }
                 </View>
               </View>
             </Pressable>
           )}
           keyExtractor={(item) => item.id}
         ></FlatList>
+        <Button
+          title="Mes jeux"
+          onPress={() => {
+            navigation.push("Bookmarks");
+          }}
+        ></Button>
       </View>
     </View>
   );

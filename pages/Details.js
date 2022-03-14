@@ -1,19 +1,46 @@
 import { Text, View } from "react-native";
 import { useState } from "react";
 import { useEffect } from "react";
-import { Image, StyleSheet, ScrollView } from "react-native";
+import { Image, StyleSheet, ScrollView, Button} from "react-native";
 import config from "../config";
+import { useDispatch, useSelector } from "react-redux";
+import actions from "../reducers/actions";
 
 export default Details = ({ navigation, route }) => {
+  const bookmarks = useSelector((state) => state.bookmarks);
+  const dispatch = useDispatch();
 
-  
   const [game, setGame] = useState({});
 
+  const handlePressAdd = () => {
+    dispatch({
+      type: actions.ADD_BOOKMARK,
+      payload: {
+        slug: game.slug,
+        name: game.name,
+        background_image: game.background_image,
+        id: game.id,
+      },
+    });
+  };
+
+  const handlePressRemove = () => {
+ 
+    dispatch({
+      type: actions.REMOVE_BOOKMARK,
+      payload: {
+        id: game.id,
+      },
+    });
+    }
+    
+
+  const isBookmarked = () =>
+    bookmarks.find((bookmark) => bookmark.id == game.id) !== undefined;
 
   const regex = /(<([^>]+)>)/gi;
 
   const getGameData = () => {
-
     const slug = route.params.slug;
     const url = `https://api.rawg.io/api/games/${slug}?key=${config.configAPI}`;
 
@@ -46,6 +73,11 @@ export default Details = ({ navigation, route }) => {
           <Text style={styles.descriptionTitle}>Game description :</Text>
           <Text style={styles.descriptionText}>{game.description}</Text>
         </View>
+        {isBookmarked() ? (
+          <Button title="⭐ Retirer" onPress={handlePressRemove} ></Button>
+        ) : (
+          <Button title="⭐ Ajouter" onPress={handlePressAdd}></Button>
+        )}
       </View>
     </ScrollView>
   );
