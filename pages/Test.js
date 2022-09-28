@@ -29,31 +29,15 @@ export default Details = ({ navigation, route }) => {
       getGameData(route.params.slug)
   }, [])
   return (
-    <View style={style.page}>
-      {/* <Text>Slug : {route.params.slug}</Text> */}
-{/* 
-      <Button
-        title="valide"
-        onPress={() => {
-          getGameData(route.params.slug);
-        }}
-      ></Button> */}
 
-      <View style={style.listItem}>
-        <Image
-          source={{ uri: game.background_image }}
-          style={style.listImage}
-        ></Image>
-        <View>
-          <Text>Name : {game.name}</Text>
-          <Text>Notes : {game.rating}</Text>
-          <Text>Date released : {game.released}</Text>
-          <Text>Rating : {game.rating}</Text>
-          <Text>Rating : {game.rating}</Text>
-        </View>
-      </View>
+    <View style={{flex:1}}>
+      <View style={{flex:1, backgroundColor:'blue'}}></View>
+      <View style={{flex:2, backgroundColor:'green'}}></View>
+      <View style={{flex:3, backgroundColor:'red'}}></View>
     </View>
+
   );
+    
 };
 
 const style = {
