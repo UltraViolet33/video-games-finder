@@ -1,86 +1,132 @@
-import { Text, View, FlatList } from "react-native";
+import { Text, View } from "react-native";
 import { useState } from "react";
 import { useEffect } from "react";
-import { Button, Image } from "react-native";
+import { Image, StyleSheet, ScrollView, Button} from "react-native";
+import config from "../config";
+import { useDispatch, useSelector } from "react-redux";
+import actions from "../reducers/actions";
 
 export default Details = ({ navigation, route }) => {
   const getGameData = (slug) => {
     const apiKey = "";
+  const bookmarks = useSelector((state) => state.bookmarks);
+  const dispatch = useDispatch();
 
-    const url = `https://api.rawg.io/api/games/${slug}?key=${apiKey}`;
+  const [game, setGame] = useState({});
 
-    console.log(slug);
+  const handlePressAdd = () => {
+    dispatch({
+      type: actions.ADD_BOOKMARK,
+      payload: {
+        slug: game.slug,
+        name: game.name,
+        background_image: game.background_image,
+        id: game.id,
+      },
+    });
+  };
+
+  const handlePressRemove = () => {
+ 
+    dispatch({
+      type: actions.REMOVE_BOOKMARK,
+      payload: {
+        id: game.id,
+      },
+    });
+    }
+    
+
+  const isBookmarked = () =>
+    bookmarks.find((bookmark) => bookmark.id == game.id) !== undefined;
+
+  const regex = /(<([^>]+)>)/gi;
+
+  const getGameData = () => {
+    const slug = route.params.slug;
+    const url = `https://api.rawg.io/api/games/${slug}?key=${config.configAPI}`;
 
     fetch(url)
       .then((response) => response.json())
       .then((data) => {
+        data.description = data.description.replace(regex, "");
         setGame(data);
       })
-      .catch(() => {
-        alert("you are a debilous !!! ");
+      .catch((error) => {
+        alert("you are a debilous !!! " + error.message);
       });
   };
 
-  const [slug, setSlug] = useState(route.params.slug);
-  const [game, setGame] = useState([]);
+  useEffect(() => {
+    getGameData();
+  }, []);
 
-
-  useEffect(()=>{
-      getGameData(route.params.slug)
-  }, [])
   return (
-    <View style={style.page}>
-      {/* <Text>Slug : {route.params.slug}</Text> */}
-{/* 
-      <Button
-        title="valide"
-        onPress={() => {
-          getGameData(route.params.slug);
-        }}
-      ></Button> */}
-
-      <View style={style.listItem}>
-        <Image
-          source={{ uri: game.background_image }}
-          style={style.listImage}
-        ></Image>
-        <View>
+    <ScrollView>
+      <View style={styles.container}>
+        <Text style={styles.name}>{game.name}</Text>
+        <View style={styles.info}>
+          <Image style={styles.image} source={{ uri: game.background_image }} />
           <Text>Name : {game.name}</Text>
-          <Text>Notes : {game.rating}</Text>
           <Text>Date released : {game.released}</Text>
-          <Text>Rating : {game.rating}</Text>
-          <Text>Rating : {game.rating}</Text>
+          <Text>Notes : {game.rating}</Text>
         </View>
+        <View style={styles.descriptionContainer}>
+          <Text style={styles.descriptionTitle}>Game description :</Text>
+          <Text style={styles.descriptionText}>{game.description}</Text>
+        </View>
+        {isBookmarked() ? (
+          <Button title="⭐ Retirer" onPress={handlePressRemove} ></Button>
+        ) : (
+          <Button title="⭐ Ajouter" onPress={handlePressAdd}></Button>
+        )}
       </View>
-    </View>
+    </ScrollView>
   );
-};
+}};
 
-const style = {
-    page: {
-        flex: 1,
-      },
-      searchBar: {
-        flexDirection: "row",
-      },
-      searchInput: {
-        flex: 1,
-        borderWidth: 1,
-        borderColor: "#dddddd",
-        padding: 10,
-      },
-      list: {
-        flex: 1,
-      },
-      listItem: {
-        margin: 2,
-        padding: 2,
-        backgroundColor: "#e0e0e0",
-        flexDirection: "row",
-      },
-      listImage: {
-        width: 60,
-        resizeMode: "center",
-        marginRight: 10,
-      },
-};
+const styles = StyleSheet.create({
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    height: "100%",
+    textAlign: "center",
+  },
+
+  name: {
+    textAlign: "center",
+    fontSize: 30,
+    fontWeight: "bold",
+  },
+
+  info: {
+    alignItems: "center",
+    flex: 2,
+    margin: 10,
+    padding: 10,
+  },
+
+  image: {
+    resizeMode: "cover",
+    height: 250,
+    width: 400,
+  },
+
+  descriptionContainer: {
+    flex: 2,
+  },
+
+  descriptionTitle: {
+    fontSize: 22,
+    textAlign: "center",
+    paddingBottom: 5,
+    fontWeight: "bold",
+  },
+
+  descriptionText: {
+    fontSize: 17,
+    textAlign: "justify",
+    padding: 10,
+  },
+});
