@@ -1,8 +1,5 @@
-import React from "react";
 import { useState } from "react";
 import {
-  Pressable,
-  Image,
   FlatList,
   Text,
   View,
@@ -10,93 +7,44 @@ import {
   TouchableOpacity,
   Button,
 } from "react-native";
-import { configAPI } from "../config";
-import { useDispatch, useSelector } from "react-redux";
+import { Game } from "../components/Game";
+import { gameServices } from "../services/game.services";
 
-export default Home = ({ navigation }) => {
+export const Home = ({ navigation }) => {
   const [games, setGames] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const bookmarks = useSelector(state => state.bookmarks);
 
   const handleButton = () => {
-    const url = `https://api.rawg.io/api/games?key=${configAPI}&search=${encodeURI(
-      searchText
-    )}`;
-
-    fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        setGames(data.results);
-      })
-      .catch(e => {
-        alert(e.message);
-      });
+    gameServices
+      .searchGame(searchText)
+      .then(data => setGames(data.results))
+      .catch(err => alert(err.message));
   };
 
-  const isBookmarked = game =>
-    bookmarks.find(bookmark => bookmark.id == game.id) !== undefined;
-
-  const handleClick = slug => {
-    navigation.push("Details", { slug });
+  const handlePressBookmarksBtn = () => {
+    navigation.push("Bookmarks");
   };
+
   return (
     <View style={style.page}>
-      <Button
-        title="Recherche"
-        onPress={() => {
-          navigation.push("Shop");
-        }}></Button>
-      <Text
-        style={{
-          color: "white",
-          textAlign: "center",
-          fontSize: 25,
-          marginTop: 15,
-        }}>
-        You can search any games !
-      </Text>
+      <Text style={style.searchText}>You can search any games !</Text>
       <View style={style.searchBar}>
         <TextInput
           value={searchText}
           onChangeText={setSearchText}
           style={style.searchInput}></TextInput>
         <TouchableOpacity style={style.button} onPress={handleButton}>
-          <Text style={{ color: "white", fontSize: 40 }}>🔍</Text>
+          <Text style={style.textBtnSearch}>🔍</Text>
         </TouchableOpacity>
       </View>
       <View style={style.list}>
         <FlatList
           data={games}
           renderItem={({ item }) => (
-            <Pressable
-              onPress={() => {
-                handleClick(item.slug);
-              }}>
-              <View style={style.listItem}>
-                <Image
-                  source={{ uri: item.background_image }}
-                  style={style.listImage}></Image>
-                <View style={style.description}>
-                  <Text style={style.name}>{item.name}</Text>
-                  <Text
-                    style={
-                      item.rating <= 3
-                        ? style.itemRBadRating
-                        : style.itemGoodRating
-                    }>
-                    Notes : {item.rating}
-                  </Text>
-                  {isBookmarked(item) ? <Text>⭐</Text> : <Text></Text>}
-                </View>
-              </View>
-            </Pressable>
+            <Game game={item} navigation={navigation} />
           )}
           keyExtractor={item => item.id}></FlatList>
-        <Button
-          title="Mes jeux"
-          onPress={() => {
-            navigation.push("Bookmarks");
-          }}></Button>
+        <Button title="Mes jeux" onPress={handlePressBookmarksBtn}></Button>
       </View>
     </View>
   );
@@ -107,6 +55,13 @@ const style = {
     flex: 1,
     flexDirection: "column",
     backgroundColor: "black",
+  },
+
+  searchText: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 25,
+    marginTop: 15,
   },
 
   searchBar: {
@@ -137,38 +92,13 @@ const style = {
     borderRadius: 30,
   },
 
+  textBtnSearch: {
+    color: "white",
+    fontSize: 40,
+  },
+
   list: {
     flex: 8,
     backgroundColor: "black",
-  },
-
-  listItem: {
-    backgroundColor: "#e0e0e0",
-    flexDirection: "row",
-    height: 100,
-    margin: 8,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-
-  name: {
-    fontSize: 15,
-    fontWeight: "bold",
-  },
-
-  itemRBadRating: {
-    color: "red",
-  },
-
-  itemGoodRating: {
-    color: "green",
-  },
-
-  listImage: {
-    width: 100,
-    height: 100,
-    resizeMode: "cover",
-    marginRight: 10,
-    borderRadius: 10,
   },
 };
