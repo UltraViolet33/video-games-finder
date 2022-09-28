@@ -1,7 +1,7 @@
 import { Pressable, View, Text, Image } from "react-native";
 import { useSelector } from "react-redux";
 
-export const Game = ({ game }) => {
+export const Game = ({ game, navigation }) => {
   const bookmarks = useSelector(state => state.bookmarks);
 
   const isBookmarked = game =>

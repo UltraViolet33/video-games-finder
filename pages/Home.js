@@ -1,4 +1,3 @@
-import React from "react";
 import { useState } from "react";
 import {
   FlatList,
@@ -8,63 +7,44 @@ import {
   TouchableOpacity,
   Button,
 } from "react-native";
-import { configAPI } from "../config";
 import { Game } from "../components/Game";
+import { gameServices } from "../services/game.services";
 
 export const Home = ({ navigation }) => {
   const [games, setGames] = useState([]);
   const [searchText, setSearchText] = useState("");
 
   const handleButton = () => {
-    const url = `https://api.rawg.io/api/games?key=${configAPI}&search=${encodeURI(
-      searchText
-    )}`;
+    gameServices
+      .searchGame(searchText)
+      .then(data => setGames(data.results))
+      .catch(err => alert(err.message));
+  };
 
-    fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        setGames(data.results);
-      })
-      .catch(e => {
-        alert(e.message);
-      });
+  const handlePressBookmarksBtn = () => {
+    navigation.push("Bookmarks");
   };
 
   return (
     <View style={style.page}>
-      <Button
-        title="Recherche"
-        onPress={() => {
-          navigation.push("Shop");
-        }}></Button>
-      <Text
-        style={{
-          color: "white",
-          textAlign: "center",
-          fontSize: 25,
-          marginTop: 15,
-        }}>
-        You can search any games !
-      </Text>
+      <Text style={style.searchText}>You can search any games !</Text>
       <View style={style.searchBar}>
         <TextInput
           value={searchText}
           onChangeText={setSearchText}
           style={style.searchInput}></TextInput>
         <TouchableOpacity style={style.button} onPress={handleButton}>
-          <Text style={{ color: "white", fontSize: 40 }}>🔍</Text>
+          <Text style={style.textBtnSearch}>🔍</Text>
         </TouchableOpacity>
       </View>
       <View style={style.list}>
         <FlatList
           data={games}
-          renderItem={({ item }) => <Game game={item} />}
+          renderItem={({ item }) => (
+            <Game game={item} navigation={navigation} />
+          )}
           keyExtractor={item => item.id}></FlatList>
-        <Button
-          title="Mes jeux"
-          onPress={() => {
-            navigation.push("Bookmarks");
-          }}></Button>
+        <Button title="Mes jeux" onPress={handlePressBookmarksBtn}></Button>
       </View>
     </View>
   );
@@ -75,6 +55,13 @@ const style = {
     flex: 1,
     flexDirection: "column",
     backgroundColor: "black",
+  },
+
+  searchText: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 25,
+    marginTop: 15,
   },
 
   searchBar: {
@@ -103,6 +90,11 @@ const style = {
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 30,
+  },
+
+  textBtnSearch: {
+    color: "white",
+    fontSize: 40,
   },
 
   list: {

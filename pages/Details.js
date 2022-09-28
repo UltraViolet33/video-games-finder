@@ -1,17 +1,19 @@
-import { Text, View } from "react-native";
-import { useState } from "react";
-import { useEffect } from "react";
-import { Image, StyleSheet, ScrollView, Button} from "react-native";
-import config from "../config";
+import {
+  Text,
+  View,
+  Image,
+  StyleSheet,
+  ScrollView,
+  Button,
+} from "react-native";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import actions from "../reducers/actions";
+import { actions } from "../reducers/actions";
+import { gameServices } from "../services/game.services";
 
-export default Details = ({ navigation, route }) => {
-  const getGameData = (slug) => {
-    const apiKey = "";
-  const bookmarks = useSelector((state) => state.bookmarks);
+export const Details = ({ route }) => {
+  const bookmarks = useSelector(state => state.bookmarks);
   const dispatch = useDispatch();
-
   const [game, setGame] = useState({});
 
   const handlePressAdd = () => {
@@ -20,6 +22,7 @@ export default Details = ({ navigation, route }) => {
       payload: {
         slug: game.slug,
         name: game.name,
+        rating: game.rating,
         background_image: game.background_image,
         id: game.id,
       },
@@ -27,33 +30,30 @@ export default Details = ({ navigation, route }) => {
   };
 
   const handlePressRemove = () => {
- 
     dispatch({
       type: actions.REMOVE_BOOKMARK,
       payload: {
         id: game.id,
       },
     });
-    }
-    
+  };
 
   const isBookmarked = () =>
-    bookmarks.find((bookmark) => bookmark.id == game.id) !== undefined;
+    bookmarks.find(bookmark => bookmark.id == game.id) !== undefined;
 
   const regex = /(<([^>]+)>)/gi;
 
   const getGameData = () => {
     const slug = route.params.slug;
-    const url = `https://api.rawg.io/api/games/${slug}?key=${config.configAPI}`;
 
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => {
+    gameServices
+      .getGameDetails(slug)
+      .then(data => {
         data.description = data.description.replace(regex, "");
         setGame(data);
       })
-      .catch((error) => {
-        alert("you are a debilous !!! " + error.message);
+      .catch(error => {
+        alert(error.message);
       });
   };
 
@@ -76,14 +76,14 @@ export default Details = ({ navigation, route }) => {
           <Text style={styles.descriptionText}>{game.description}</Text>
         </View>
         {isBookmarked() ? (
-          <Button title="⭐ Retirer" onPress={handlePressRemove} ></Button>
+          <Button title="⭐ Retirer" onPress={handlePressRemove}></Button>
         ) : (
           <Button title="⭐ Ajouter" onPress={handlePressAdd}></Button>
         )}
       </View>
     </ScrollView>
   );
-}};
+};
 
 const styles = StyleSheet.create({
   container: {

@@ -4,10 +4,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { actions } from "./reducers/actions";
-// import Details from "./pages/Details";
 import { Home } from "./pages/Home";
-// import Bookmarks from "./pages/Bookmarks";
-// import Shop from "./pages/Shop";
+import { Details } from "./pages/Details";
+import { Bookmarks } from "./pages/Bookmarks";
 
 const Stack = createNativeStackNavigator();
 
@@ -17,7 +16,6 @@ export const Router = () => {
   useEffect(() => {
     AsyncStorage.getItem("bookmarks").then(jsonBookmarks => {
       const bookmarks = JSON.parse(jsonBookmarks || "[]");
-      // console.log(bookmarks);
       dispatch({ type: actions.REPLACE_BOOKMARKS, payload: bookmarks });
     });
   }, []);
@@ -30,7 +28,7 @@ export const Router = () => {
           component={Home}
           options={{ headerShown: false }}
         />
-        {/* <Stack.Screen
+        <Stack.Screen
           name="Details"
           component={Details}
           options={{ title: "Details" }}
@@ -40,13 +38,7 @@ export const Router = () => {
           component={Bookmarks}
           options={{ title: "Mes jeux" }}
         />
-        <Stack.Screen
-          name="Shop"
-          component={Shop}
-          options={{ title: "Recherche" }}
-        /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
-
