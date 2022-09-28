@@ -26,7 +26,7 @@ export const Game = ({ game, navigation }) => {
             style={
               game.rating <= 3 ? style.itemRBadRating : style.itemGoodRating
             }>
-            Notes : {game.rating}
+            Rate : {game.rating}
           </Text>
           {isBookmarked(game) ? <Text>⭐</Text> : <Text></Text>}
         </View>

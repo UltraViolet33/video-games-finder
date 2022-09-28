@@ -36,7 +36,7 @@ export const Router = () => {
         <Stack.Screen
           name="Bookmarks"
           component={Bookmarks}
-          options={{ title: "Mes jeux" }}
+          options={{ title: "My Games" }}
         />
       </Stack.Navigator>
     </NavigationContainer>

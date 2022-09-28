@@ -69,16 +69,16 @@ export const Details = ({ route }) => {
           <Image style={styles.image} source={{ uri: game.background_image }} />
           <Text>Name : {game.name}</Text>
           <Text>Date released : {game.released}</Text>
-          <Text>Notes : {game.rating}</Text>
+          <Text>Rate : {game.rating}</Text>
         </View>
         <View style={styles.descriptionContainer}>
           <Text style={styles.descriptionTitle}>Game description :</Text>
           <Text style={styles.descriptionText}>{game.description}</Text>
         </View>
         {isBookmarked() ? (
-          <Button title="⭐ Retirer" onPress={handlePressRemove}></Button>
+          <Button title="⭐ Remove" onPress={handlePressRemove}></Button>
         ) : (
-          <Button title="⭐ Ajouter" onPress={handlePressAdd}></Button>
+          <Button title="⭐ Add" onPress={handlePressAdd}></Button>
         )}
       </View>
     </ScrollView>

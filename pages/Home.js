@@ -44,7 +44,7 @@ export const Home = ({ navigation }) => {
             <Game game={item} navigation={navigation} />
           )}
           keyExtractor={item => item.id}></FlatList>
-        <Button title="Mes jeux" onPress={handlePressBookmarksBtn}></Button>
+        <Button title="My games" onPress={handlePressBookmarksBtn}></Button>
       </View>
     </View>
   );
