@@ -1,8 +1,6 @@
 import React from "react";
 import { useState } from "react";
 import {
-  Pressable,
-  Image,
   FlatList,
   Text,
   View,
@@ -11,12 +9,11 @@ import {
   Button,
 } from "react-native";
 import { configAPI } from "../config";
-import { useDispatch, useSelector } from "react-redux";
+import { Game } from "../components/Game";
 
-export default Home = ({ navigation }) => {
+export const Home = ({ navigation }) => {
   const [games, setGames] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const bookmarks = useSelector(state => state.bookmarks);
 
   const handleButton = () => {
     const url = `https://api.rawg.io/api/games?key=${configAPI}&search=${encodeURI(
@@ -33,12 +30,6 @@ export default Home = ({ navigation }) => {
       });
   };
 
-  const isBookmarked = game =>
-    bookmarks.find(bookmark => bookmark.id == game.id) !== undefined;
-
-  const handleClick = slug => {
-    navigation.push("Details", { slug });
-  };
   return (
     <View style={style.page}>
       <Button
@@ -67,30 +58,7 @@ export default Home = ({ navigation }) => {
       <View style={style.list}>
         <FlatList
           data={games}
-          renderItem={({ item }) => (
-            <Pressable
-              onPress={() => {
-                handleClick(item.slug);
-              }}>
-              <View style={style.listItem}>
-                <Image
-                  source={{ uri: item.background_image }}
-                  style={style.listImage}></Image>
-                <View style={style.description}>
-                  <Text style={style.name}>{item.name}</Text>
-                  <Text
-                    style={
-                      item.rating <= 3
-                        ? style.itemRBadRating
-                        : style.itemGoodRating
-                    }>
-                    Notes : {item.rating}
-                  </Text>
-                  {isBookmarked(item) ? <Text>⭐</Text> : <Text></Text>}
-                </View>
-              </View>
-            </Pressable>
-          )}
+          renderItem={({ item }) => <Game game={item} />}
           keyExtractor={item => item.id}></FlatList>
         <Button
           title="Mes jeux"
@@ -140,35 +108,5 @@ const style = {
   list: {
     flex: 8,
     backgroundColor: "black",
-  },
-
-  listItem: {
-    backgroundColor: "#e0e0e0",
-    flexDirection: "row",
-    height: 100,
-    margin: 8,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-
-  name: {
-    fontSize: 15,
-    fontWeight: "bold",
-  },
-
-  itemRBadRating: {
-    color: "red",
-  },
-
-  itemGoodRating: {
-    color: "green",
-  },
-
-  listImage: {
-    width: 100,
-    height: 100,
-    resizeMode: "cover",
-    marginRight: 10,
-    borderRadius: 10,
   },
 };

@@ -1,24 +1,23 @@
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-// import Details from "./pages/Details";
-import Home from "./pages/Home";
-// import Bookmarks from "./pages/Bookmarks";
-
-import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useDispatch } from "react-redux";
-import actions from "./reducers/actions";
+import { actions } from "./reducers/actions";
+// import Details from "./pages/Details";
+import { Home } from "./pages/Home";
+// import Bookmarks from "./pages/Bookmarks";
 // import Shop from "./pages/Shop";
 
 const Stack = createNativeStackNavigator();
 
-const Router = () => {
+export const Router = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    AsyncStorage.getItem("bookmarks").then((jsonBookmarks) => {
+    AsyncStorage.getItem("bookmarks").then(jsonBookmarks => {
       const bookmarks = JSON.parse(jsonBookmarks || "[]");
-      console.log(bookmarks);
+      // console.log(bookmarks);
       dispatch({ type: actions.REPLACE_BOOKMARKS, payload: bookmarks });
     });
   }, []);
@@ -50,4 +49,4 @@ const Router = () => {
     </NavigationContainer>
   );
 };
-export default Router;
+
