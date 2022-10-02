@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "rn-games",
-    "slug": "rn-games",
+    "name": "ulysse-rn-games",
+    "slug": "ulysse-rn-games",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "updates": {
@@ -23,7 +23,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.ulysse28.ulysserngames"
     },
     "web": {
       "favicon": "./assets/favicon.png"
